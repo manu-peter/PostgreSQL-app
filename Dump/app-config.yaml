@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: app-demo
+data:
+  APP_NAME: employee-demo
+  ENVIRONMENT: lab
+  BACKEND_SERVICE: backend-service
+

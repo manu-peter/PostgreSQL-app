@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: app-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: tiangolo/uvicorn-gunicorn-fastapi:python3.11  # OpenShift-friendly
+        ports:
+        - containerPort: 8080   # high port for non-root
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: db-secret
+        env:
+        - name: PORT
+          value: "8080"           # ensure Gunicorn binds to 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: app-demo
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 80         # service port for other pods or routes
+      targetPort: 8080 # matches containerPort
+  type: ClusterIP
+
