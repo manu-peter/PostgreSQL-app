@@ -22,20 +22,15 @@ stages:
     steps:
     
     - task: Docker@2
-      displayName: 'Build Backend Image'
+      displayName: 'Build and Push Backend Image'
       inputs:
-        command: build
+        command: buildAndPush
         repository: $(containerRegistry)/$(backendImage)
         dockerfile: $(backendDockerfile)
         buildContext: $(backendContext)
         tags: |
           $(Build.SourceVersion)
           latest
-    
-    - script: |
-        docker push $(containerRegistry)/$(backendImage):$(Build.SourceVersion)
-        docker push $(containerRegistry)/$(backendImage):latest
-      displayName: 'Push to Registry (Manual)'
 
 - stage: UpdateManifests
   displayName: 'Update Kubernetes Manifests'
